@@ -1,5 +1,6 @@
 const canvasSketch = require('canvas-sketch');
 const { lerp } = require('canvas-sketch-util/math'); // linear interpolation 
+const random = require('canvas-sketch-util/random'); // pseudo random number generation 
 
 const settings = {
   dimensions: [2048, 2048]
@@ -11,7 +12,7 @@ const settings = {
 const sketch = () => {
   const createGrid = () => {
     const points = [];
-    const count = 5;
+    const count = 40;
     for (let x = 0; x < count; x++) {
       for (let y = 0; y < count; y++) {
         // work in uv space
@@ -23,8 +24,13 @@ const sketch = () => {
     return points;
   }
   
-  const points = createGrid();
-  const margin = 400; 
+  // const points = createGdotsrid();
+  // const points = createGrid().filter(() => Math.random() > 0.5); // randomly remove points
+  // can use deterministic random so it is the same every time
+  random.setSeed(201);
+  const points = createGrid().filter(() => random.value() > 0.5); // randomly remove points
+
+  const margin = 200; 
   
   return ({ context, width, height }) => {
     context.fillStyle = 'white';
@@ -37,9 +43,9 @@ const sketch = () => {
       const y = lerp (margin, height - margin, v);
 
       context.beginPath();
-      context.arc( x , y, 100, 0, Math.PI * 2, false);
+      context.arc( x , y, 5, 0, Math.PI * 2, false);
       context.strokeStyle = 'black';
-      context.lineWidth = 40;
+      context.lineWidth = 20;
       context.stroke();
     }); 
   };
