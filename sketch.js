@@ -18,7 +18,10 @@ const sketch = () => {
         // work in uv space
         const u = count <= 1 ? 0.5 : x / (count - 1); // value between 0 and 1
         const v = count <= 1 ? 0.5 : y / (count - 1); 
-        points.push([ u, v ]); 
+        points.push({
+          radius: random.value(),
+          position: [ u, v ]
+        }); 
       }
     }
     return points;
@@ -36,14 +39,15 @@ const sketch = () => {
     context.fillStyle = 'white';
     context.fillRect( 0, 0, width, height );
 
-    points.forEach(([u,v]) => {
+    points.forEach(data => {
+      const {radius, position: [u, v]} = data;
       // const x = u * width;
       // const y = v * height;
       const x = lerp(margin, width - margin, u);
       const y = lerp (margin, height - margin, v);
 
       context.beginPath();
-      context.arc( x , y, 5, 0, Math.PI * 2, false);
+      context.arc( x , y, radius * width, 0, Math.PI * 2, false);
       context.strokeStyle = 'black';
       context.lineWidth = 20;
       context.stroke();
