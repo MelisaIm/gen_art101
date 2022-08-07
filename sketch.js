@@ -19,7 +19,7 @@ const sketch = () => {
         const u = count <= 1 ? 0.5 : x / (count - 1); // value between 0 and 1
         const v = count <= 1 ? 0.5 : y / (count - 1); 
         points.push({
-          radius: random.value(),
+          radius: random.value() * 0.02,
           position: [ u, v ]
         }); 
       }
@@ -48,9 +48,11 @@ const sketch = () => {
 
       context.beginPath();
       context.arc( x , y, radius * width, 0, Math.PI * 2, false);
-      context.strokeStyle = 'black';
-      context.lineWidth = 20;
-      context.stroke();
+      // context.strokeStyle = 'black';
+      // context.lineWidth = 20;
+      // context.stroke();
+      context.fillStyle = 'red';
+      context.fill();
     }); 
   };
 };
