@@ -13,7 +13,7 @@ const settings = {
 const sketch = () => {
   const colorCount = random.rangeFloor(1, 6); // 5 inclusive
   // const palette = random.pick(palettes)
-  const palette = random.pick(palettes).slice(0, colorCount);
+  const palette = random.shuffle(random.pick(palettes)).slice(0, colorCount);
 
   const createGrid = () => {
     const points = [];
@@ -23,9 +23,11 @@ const sketch = () => {
         // work in uv space
         const u = count <= 1 ? 0.5 : x / (count - 1); // value between 0 and 1
         const v = count <= 1 ? 0.5 : y / (count - 1); 
+        const radius = Math.abs(random.noise2D( u, v )) * 0.05; 
         points.push({
           // radius: random.value() * 0.02,
-          radius: Math.abs(0.01 + random.gaussian() * 0.01), // more organic distribution
+          // radius: Math.abs(0.01 + random.gaussian() * 0.01), // more organic distribution
+          radius,
           position: [ u, v ],
           color: random.pick(palette)
         }); 
@@ -37,7 +39,7 @@ const sketch = () => {
   // const points = createGdotsrid();
   // const points = createGrid().filter(() => Math.random() > 0.5); // randomly remove points
   // can use deterministic random so it is the same every time
-  random.setSeed(201);
+  // random.setSeed(201);
   const points = createGrid().filter(() => random.value() > 0.5); // randomly remove points
 
   const margin = 200; 
