@@ -36,7 +36,7 @@ const createGrid = () => {
 }
 
 let points = createGrid();
-const margin = 10;
+// const margin = 10;
 
 const sketch = () => {
   const palette = random.shuffle(random.pick(palettes));
@@ -60,21 +60,22 @@ const sketch = () => {
         usedPoints[`${randomPoint[0]}:${randomPoint[1]}`] = true;
         points = points.filter((d) => d !== randomPoint);
         const trapezoid = {
-          points: [data, randomPoint],
+          points: [data, randomPoint, `[${data.x}, 1]`, `[${randomPoint.x}, 1]`],
           color: random.pick(palette)
         };
         trapezoids.push(trapezoid);
       }
-      console.log(trapezoids)
-      const x = lerp(margin, width - margin, u);
-      const y = lerp (margin, height - margin, v);
-
-      context.beginPath();
-      context.arc( x , y, 10, 0, Math.PI * 2, false);
-      context.strokeStyle = 'black';
-      context.lineWidth = 20;
-      context.stroke();
-    })
+      // const x = lerp(margin, width - margin, u);
+      // const y = lerp (margin, height - margin, v);
+      // context.beginPath();
+      // context.arc( x , y, 10, 0, Math.PI * 2, false);
+      // context.strokeStyle = 'black';
+      // context.lineWidth = 20;
+      // context.stroke();
+    });
+    trapezoids.forEach(t => {
+      // context.fillRect()
+    });
   }
 };
 
