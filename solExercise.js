@@ -60,21 +60,38 @@ const sketch = () => {
         usedPoints[`${randomPoint[0]}:${randomPoint[1]}`] = true;
         points = points.filter((d) => d !== randomPoint);
         const trapezoid = {
-          points: [data, randomPoint, `[${data.x}, 1]`, `[${randomPoint.x}, 1]`],
+          points: [data, randomPoint, [u, 1], [randomPoint[0], 1]],
           color: random.pick(palette)
         };
         trapezoids.push(trapezoid);
       }
-      // const x = lerp(margin, width - margin, u);
-      // const y = lerp (margin, height - margin, v);
-      // context.beginPath();
-      // context.arc( x , y, 10, 0, Math.PI * 2, false);
-      // context.strokeStyle = 'black';
-      // context.lineWidth = 20;
-      // context.stroke();
     });
+    // const t = trapezoids[0];
+    // context.beginPath();
+    // context.moveTo(...t.points[0]);
+    // context.lineTo(...t.points[1]);
+    // context.lineTo(...t.points[2]);
+    // context.fill();
     trapezoids.forEach(t => {
-      // context.fillRect()
+      // refer to docs https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
+      // begin drawing
+      console.log(t);
+      context.stroke();
+      context.beginPath();
+      // moveTo first point
+      const [u0, v0] = t.points[0];
+      context.moveTo(u0 * width, v0 * height);
+      // draw line to second
+      const [u1, v1] = t.points[1];
+      context.lineTo(u1 * width, v1 * height);
+      // draw line to third
+      const [u2, v2] = t.points[2];
+      context.lineTo(u2 * width, v2 * height);
+      // close shape
+      const [u3, v3] = t.points[3];
+      context.lineTo(u3 * width, v3 * height);
+      // color the shape
+      context.fill();
     });
   }
 };
