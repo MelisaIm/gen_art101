@@ -81,15 +81,17 @@ const sketch = () => {
       // moveTo first point
       const [u0, v0] = t.points[0];
       context.moveTo(u0 * width, v0 * height);
-      // draw line to second
+      // draw line to first
       const [u1, v1] = t.points[1];
       context.lineTo(u1 * width, v1 * height);
-      // draw line to third
+      // draw line to second
       const [u2, v2] = t.points[2];
       context.lineTo(u2 * width, v2 * height);
-      // close shape
+      // draw line to third
       const [u3, v3] = t.points[3];
       context.lineTo(u3 * width, v3 * height);
+      // close out shape
+      context.lineTo(u0 * width, v0 * height);
       // color the shape
       context.fill();
     });
