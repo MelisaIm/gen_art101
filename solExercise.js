@@ -36,15 +36,16 @@ const createGrid = () => {
 }
 
 let points = createGrid();
-const margin = 100;
+const margin = 50;
 
 const sketch = () => {
   const palette = random.shuffle(random.pick(palettes));
   return ({ context, width, height }) => {
-    context.fillStyle = 'white';
+    var my_gradient = context.createLinearGradient(0, 0, 0, height);
+    my_gradient.addColorStop(0, "#2596be");
+    my_gradient.addColorStop(1, "#abdbe3");
+    context.fillStyle = my_gradient;
     context.fillRect(0, 0, width, height);
-
-    console.log(points);
     points.forEach(data => {
       const [u, v] = data;
       // starting from each point check if it has been used
@@ -52,13 +53,15 @@ const sketch = () => {
         // if used, skip
         return;
       } else {
-        // if not used, generate trapezoid and fill color, do not draw until all
-        //    are "created" to dictate z-order 
+        // Ensure shape is trapezoidal by making the second point on y-axis not reach 1
         usedPoints[`${u}:${v}`] = true;
         points = points.filter((d) => d !== data);
         let randomPoint = random.pick(points);
-        usedPoints[`${randomPoint[0]}:${randomPoint[1]}`] = true;
         points = points.filter((d) => d !== randomPoint);
+        if (randomPoint[1] == 1) {
+          randomPoint[1] = Math.floor(1 - (Math.random() * (0.9 - 0.1) + 0.1));
+        }
+        usedPoints[`${randomPoint[0]}:${randomPoint[1]}`] = true;
         const trapezoid = {
           points: [data, randomPoint, [u, 1], [randomPoint[0], 1]],
           color: random.pick(palette),
@@ -67,8 +70,17 @@ const sketch = () => {
         trapezoids.push(trapezoid);
       }
     });
-    const t = trapezoids[0];
-    console.log(t);
+
+    trapezoids.sort((t1, t2) => {
+      if (t1.averageY < t2.averageY) {
+        return -1;
+      } 
+      if (t1.averageY > t2.averageY) {
+        return 1;
+      }
+      return 0;
+    })
+    console.log(trapezoids);
     // context.beginPath();
     // console.log(t.points[3][0] * width - margin, t.points[3][1] * height - margin)
     // context.moveTo(t.points[3][0] * width + margin, t.points[3][1] * height + margin);
@@ -84,12 +96,12 @@ const sketch = () => {
       context.save();
       context.beginPath();
       let trapezoid = new Path2D();
-      trapezoid.moveTo(t.points[3][0] * width + margin, t.points[3][1] * height - margin);
-      trapezoid.lineTo(t.points[1][0] * width - margin, t.points[1][1] * height + margin);
-      trapezoid.lineTo(t.points[0][0] * width + margin, t.points[0][1] * height + margin);
-      trapezoid.lineTo(t.points[2][0] * width - margin, t.points[2][1] * height - margin);
-      trapezoid.lineTo(t.points[3][0] * width + margin, t.points[3][1] * height - margin);
-      context.fillStyle = random.pick(palette);
+      trapezoid.moveTo(lerp(margin, width - margin, t.points[2][0]), lerp(margin, height - margin, t.points[2][1]));
+      trapezoid.lineTo(lerp(margin, width - margin, t.points[0][0]), lerp(margin, height - margin, t.points[0][1]));
+      trapezoid.lineTo(lerp(margin, width - margin, t.points[1][0]), lerp(margin, height - margin, t.points[1][1]));
+      trapezoid.lineTo(lerp(margin, width - margin, t.points[3][0]), lerp(margin, height - margin, t.points[3][1]));
+      trapezoid.lineTo(lerp(margin, width - margin, t.points[2][0]), lerp(margin, height - margin, t.points[2][1]));
+      context.fillStyle = t.color;
       context.fill(trapezoid);
       
       context.restore();
