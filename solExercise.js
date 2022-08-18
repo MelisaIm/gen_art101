@@ -9,7 +9,7 @@ const palettes = require('nice-color-palettes');
  *  2. Connect two random points on the grid forming a trapezoid with two parallel
  *     sides extending down
  *  3. Fill the trapezoid with a color, then stroke with the background color
- *  4. Find another two random points and repeatl continuing until all grid points 
+ *  4. Find another two random points and repeat continuing until all grid points 
  *     are exhausted
  *  5. Layer shapes by the average Y position of their two grid points
  * 
@@ -36,7 +36,7 @@ const createGrid = () => {
 }
 
 let points = createGrid();
-// const margin = 10;
+const margin = 100;
 
 const sketch = () => {
   const palette = random.shuffle(random.pick(palettes));
@@ -56,44 +56,43 @@ const sketch = () => {
         //    are "created" to dictate z-order 
         usedPoints[`${u}:${v}`] = true;
         points = points.filter((d) => d !== data);
-        const randomPoint = random.pick(points);
+        let randomPoint = random.pick(points);
         usedPoints[`${randomPoint[0]}:${randomPoint[1]}`] = true;
         points = points.filter((d) => d !== randomPoint);
         const trapezoid = {
           points: [data, randomPoint, [u, 1], [randomPoint[0], 1]],
-          color: random.pick(palette)
+          color: random.pick(palette),
+          averageY: (v+randomPoint[1])/2
         };
         trapezoids.push(trapezoid);
       }
     });
-    // const t = trapezoids[0];
+    const t = trapezoids[0];
+    console.log(t);
     // context.beginPath();
-    // context.moveTo(...t.points[0]);
-    // context.lineTo(...t.points[1]);
-    // context.lineTo(...t.points[2]);
+    // console.log(t.points[3][0] * width - margin, t.points[3][1] * height - margin)
+    // context.moveTo(t.points[3][0] * width + margin, t.points[3][1] * height + margin);
+    // context.lineTo(t.points[1][0] * width - margin, t.points[1][1] * height - margin);
+    // context.lineTo(t.points[0][0] * width - margin, t.points[0][1] * height - margin);
+    // context.lineTo(t.points[2][0] * width - margin, t.points[2][1] * height - margin);
+    // context.lineTo(t.points[3][0] * width - margin, t.points[3][1] * height - margin);
+    // context.stroke();
     // context.fill();
     trapezoids.forEach(t => {
       // refer to docs https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
       // begin drawing
-      console.log(t);
-      context.stroke();
+      context.save();
       context.beginPath();
-      // moveTo first point
-      const [u0, v0] = t.points[0];
-      context.moveTo(u0 * width, v0 * height);
-      // draw line to first
-      const [u1, v1] = t.points[1];
-      context.lineTo(u1 * width, v1 * height);
-      // draw line to second
-      const [u2, v2] = t.points[2];
-      context.lineTo(u2 * width, v2 * height);
-      // draw line to third
-      const [u3, v3] = t.points[3];
-      context.lineTo(u3 * width, v3 * height);
-      // close out shape
-      context.lineTo(u0 * width, v0 * height);
-      // color the shape
-      context.fill();
+      let trapezoid = new Path2D();
+      trapezoid.moveTo(t.points[3][0] * width + margin, t.points[3][1] * height - margin);
+      trapezoid.lineTo(t.points[1][0] * width - margin, t.points[1][1] * height + margin);
+      trapezoid.lineTo(t.points[0][0] * width + margin, t.points[0][1] * height + margin);
+      trapezoid.lineTo(t.points[2][0] * width - margin, t.points[2][1] * height - margin);
+      trapezoid.lineTo(t.points[3][0] * width + margin, t.points[3][1] * height - margin);
+      context.fillStyle = random.pick(palette);
+      context.fill(trapezoid);
+      
+      context.restore();
     });
   }
 };
